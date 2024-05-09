@@ -1,0 +1,39 @@
+# Importing necessary libraries
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_iris
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
+
+# Load the Iris dataset
+iris = load_iris()
+X = iris.data
+y = iris.target
+feature_names = iris.feature_names
+
+# Standardize the feature values
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# Perform PCA
+pca = PCA(n_components=2)  # Reduce to 2 principal components for visualization
+X_pca = pca.fit_transform(X_scaled)
+
+# Create a DataFrame for visualization
+df_pca = pd.DataFrame(data=X_pca, columns=['PC1', 'PC2'])
+df_pca['Target'] = y
+
+# Visualize the data in the reduced dimensional space
+plt.figure(figsize=(10, 6))
+targets = np.unique(y)
+colors = ['r', 'g', 'b']
+for target, color in zip(targets, colors):
+    indices = df_pca['Target'] == target
+    plt.scatter(df_pca.loc[indices, 'PC1'], df_pca.loc[indices, 'PC2'], c=color, label=target)
+plt.xlabel('Principal Component 1')
+plt.ylabel('Principal Component 2')
+plt.title('PCA of Iris Dataset')
+plt.legend(targets)
+plt.grid()
+plt.show()
